@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}{{ programme.title }}{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="text-center mb-4">{{ programme.title }}</h1>
+    <div class="row">
+        {% for exercise in programme.exercises %}
+        <div class="col-md-6 mb-4">
+            <div class="card programme-card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">{{ exercise.name }}</h5>
+                    {% if exercise.sets %}
+                        <p class="card-text"><strong>Séries :</strong> {{ exercise.sets }}</p>
+                    {% endif %}
+                    {% if exercise.weight %}
+                        <p class="card-text"><strong>Poids :</strong> {{ exercise.weight }}</p>
+                    {% endif %}
+                    {% if exercise.details %}
+                        <p class="card-text"><strong>Détails :</strong> {{ exercise.details }}</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

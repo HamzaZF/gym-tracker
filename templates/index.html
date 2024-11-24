@@ -1,0 +1,154 @@
+{% extends "base.html" %}
+
+{% block title %}Accueil{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="text-center mb-4">Séance du jour : {{ programme.title }}</h1>
+    
+    <form id="daily-session-form">
+        <div class="row">
+            {% for exercise in programme.exercises %}
+            <div class="col-md-6 mb-4">
+                <div class="card shadow-sm">
+                    <div class="card-body d-flex justify-content-between align-items-start">
+                        <div>
+                            <h5 class="card-title">{{ exercise.name }}</h5>
+                            {% if exercise.sets %}
+                                <p class="card-text"><strong>Séries :</strong> {{ exercise.sets }}</p>
+                            {% endif %}
+                            {% if exercise.weight %}
+                                <p class="card-text"><strong>Poids :</strong> {{ exercise.weight }}</p>
+                            {% endif %}
+                            {% if exercise.details %}
+                                <p class="card-text"><strong>Détails :</strong> {{ exercise.details }}</p>
+                            {% endif %}
+                        </div>
+                        <div class="d-flex flex-column align-items-end">
+                            <button type="button" class="btn btn-outline-success btn-finish mb-2" data-status="finished">Terminé</button>
+                            <button type="button" class="btn btn-outline-danger btn-not-finish" data-status="not-finished">Non Terminé</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="text-center mt-4">
+            <button type="button" id="validate-button" class="btn btn-primary">Valider</button>
+            <button type="button" id="reset-button" class="btn btn-secondary disabled">Annuler</button>
+        </div>
+    </form>
+</div>
+
+<script>
+    const buttonsFinish = document.querySelectorAll('.btn-finish');
+    const buttonsNotFinish = document.querySelectorAll('.btn-not-finish');
+    const validateButton = document.getElementById('validate-button');
+    const resetButton = document.getElementById('reset-button');
+    let isLocked = {{ validation_status["validated"] | tojson }}; // Récupère l'état de validation depuis le backend
+
+    // Désactiver les boutons si la séance est validée
+    if (isLocked) {
+        buttonsFinish.forEach(button => button.classList.add('disabled'));
+        buttonsNotFinish.forEach(button => button.classList.add('disabled'));
+        validateButton.classList.add('disabled');
+        resetButton.classList.remove('disabled');
+    }
+
+    // Fonction pour vérifier si tous les exercices ont une sélection
+    function allExercisesSelected() {
+        const exercises = document.querySelectorAll('.card'); // Récupérer toutes les cartes
+        for (let exercise of exercises) {
+            const finishSelected = exercise.querySelector('.btn-finish.selected');
+            const notFinishSelected = exercise.querySelector('.btn-not-finish.selected');
+            if (!finishSelected && !notFinishSelected) {
+                return false; // Si un exercice n'est pas sélectionné, retourner false
+            }
+        }
+        return true; // Tous les exercices ont été sélectionnés
+    }
+
+    // Gestion des boutons "Terminé" et "Non Terminé"
+    buttonsFinish.forEach(button => {
+        button.addEventListener('click', () => {
+            if (!isLocked) {
+                button.classList.add('selected'); // Marquer ce bouton comme sélectionné
+                button.nextElementSibling.classList.remove('selected'); // Désélectionner l'autre
+            }
+        });
+    });
+
+    buttonsNotFinish.forEach(button => {
+        button.addEventListener('click', () => {
+            if (!isLocked) {
+                button.classList.add('selected'); // Marquer ce bouton comme sélectionné
+                button.previousElementSibling.classList.remove('selected'); // Désélectionner l'autre
+            }
+        });
+    });
+
+    // Gestion du bouton "Valider"
+    validateButton.addEventListener('click', () => {
+        if (!isLocked && allExercisesSelected()) {
+            const exercises = [];
+            document.querySelectorAll('.card').forEach(card => {
+                const name = card.querySelector('.card-title').innerText;
+                const status = card.querySelector('.btn-finish.selected') ? 'Terminé' : 'Non Terminé';
+                exercises.push({ name, status });
+            });
+
+            // Envoi des données au serveur
+            fetch('/validate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ exercises })
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.message); // Message de confirmation
+                isLocked = true; // Verrouiller tous les choix après validation
+                validateButton.classList.add('disabled'); // Désactiver le bouton Valider
+                resetButton.classList.remove('disabled'); // Activer le bouton Annuler
+                buttonsFinish.forEach(button => button.classList.add('disabled'));
+                buttonsNotFinish.forEach(button => button.classList.add('disabled'));
+            })
+            .catch(err => console.error('Erreur:', err));
+        } else if (!isLocked) {
+            alert("Veuillez terminer tous les exercices avant de valider !");
+        }
+    });
+
+    // Gestion du bouton "Annuler"
+    resetButton.addEventListener('click', () => {
+        if (isLocked) {
+            // Envoyer une requête au backend pour réinitialiser les données
+            fetch('/reset', {
+                method: 'POST'
+            })
+            .then(response => {
+                if (response.ok) {
+                    alert("Les sélections ont été réinitialisées.");
+                    isLocked = false; // Déverrouiller les choix
+                    validateButton.classList.remove('disabled'); // Réactiver le bouton "Valider"
+                    resetButton.classList.add('disabled'); // Désactiver le bouton "Annuler"
+
+                    // Réinitialiser les sélections visuelles
+                    buttonsFinish.forEach(button => {
+                        button.classList.remove('selected', 'disabled');
+                    });
+
+                    buttonsNotFinish.forEach(button => {
+                        button.classList.remove('selected', 'disabled');
+                    });
+                } else {
+                    alert("Erreur lors de la réinitialisation !");
+                }
+            })
+            .catch(err => console.error('Erreur:', err));
+        }
+    });
+</script>
+
+{% endblock %}

@@ -1,0 +1,159 @@
+/* Corps et arrière-plan */
+body {
+    background-color: #121212;
+    color: #ffffff;
+    font-family: 'Arial', sans-serif;
+}
+
+/* Titre */
+h1, h2 {
+    font-family: 'Arial', sans-serif;
+    color: #ffffff;
+}
+
+/* Cartes */
+.card {
+    background-color: #1e1e2f;
+    border: 1px solid #27293d;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+}
+
+.card-title {
+    font-weight: bold;
+    color: #66bb6a; /* Couleur verte douce */
+}
+
+.card-text {
+    color: #bbbbbb;
+}
+
+.card-body {
+    display: flex; /* Permet d'aligner les contenus horizontalement */
+    justify-content: space-between; /* Espace entre les blocs de gauche et de droite */
+}
+
+.card-body .btn {
+    display: block; /* Assure que les boutons occupent toute la largeur disponible */
+    width: 100%; /* Les boutons auront la même largeur */
+    max-width: 150px; /* Limite la largeur à une taille maximale */
+    text-align: center; /* Centre le texte */
+}
+
+
+.card-body .btn-finish {
+    margin-bottom: 10px; /* Espace entre le bouton "Terminé" et "Non Terminé" */
+}
+
+
+/* Boutons */
+.btn-finish.selected {
+    background-color: #388e3c !important;
+    color: white !important;
+    border-color: #388e3c !important;
+}
+
+.btn-not-finish.selected {
+    background-color: #d32f2f !important;
+    color: white !important;
+    border-color: #d32f2f !important;
+}
+
+.btn {
+    background-color: #333;
+    color: #ffffff;
+    border: 1px solid #555;
+}
+
+.btn:hover {
+    background-color: #444;
+}
+
+/* Désactiver les boutons */
+.btn.disabled {
+    pointer-events: none; /* Désactiver les clics */
+    opacity: 0.4; /* Apparence grisée */
+}
+
+/* Forcer le style de la navbar en mode sombre */
+.navbar {
+    overflow: visible; /* Permet de gérer correctement les menus qui débordent */
+    background-color: #1e1e2f !important; /* Fond sombre */
+    border-bottom: 1px solid #27293d !important; /* Légère bordure */
+}
+
+.navbar-nav {
+    position: relative;
+    z-index: 1050; /* Assure que les éléments du menu sont bien affichés */
+}
+
+.navbar-brand {
+    color: #66bb6a !important; /* Couleur verte */
+    font-weight: bold;
+    font-size: 1.5rem;
+}
+
+.navbar-brand:hover {
+    color: #81c784 !important; /* Couleur verte claire */
+}
+
+.nav-link {
+    color: #bbbbbb !important; /* Texte gris clair */
+    font-size: 1rem;
+}
+
+.nav-link:hover {
+    color: #ffffff !important; /* Blanc au survol */
+}
+
+.nav-item.active .nav-link {
+    color: #66bb6a !important; /* Vert doux pour le lien actif */
+    font-weight: bold;
+}
+
+.dropdown-menu {
+    background-color: #1e1e2f !important; /* Fond sombre pour le menu */
+    border: 1px solid #27293d !important;
+}
+
+.dropdown-item {
+    color: #bbbbbb !important;
+    white-space: normal; /* Permet les retours à la ligne */
+    word-wrap: break-word; /* Coupe les mots trop longs si nécessaire */
+}
+
+
+.dropdown-item:hover {
+    background-color: #333333 !important; /* Fond gris foncé au survol */
+    color: #ffffff !important; /* Texte blanc */
+}
+
+/* Bouton de la barre de navigation (petits écrans) */
+.navbar-toggler {
+    border-color: #66bb6a !important;
+}
+
+.navbar-toggler-icon {
+    background-color: #66bb6a !important;
+}
+
+.text-center {
+    margin-bottom: 20px; /* Ajoute un espace en bas */
+}
+
+/* Style spécifique pour les cartes du programme */
+.programme-card .card-body {
+    display: flex;
+    flex-direction: column; /* Organise les éléments verticalement */
+    align-items: flex-start; /* Aligne les textes à gauche */
+}
+
+.programme-card .card-title {
+    font-size: 1.25rem; /* Taille du titre */
+    margin-bottom: 10px; /* Ajoute un espacement en bas du titre */
+}
+
+.programme-card .card-text {
+    font-size: 1rem; /* Taille des détails */
+    line-height: 1.5; /* Espacement entre les lignes */
+}
